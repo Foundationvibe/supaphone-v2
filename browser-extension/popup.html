@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SupaPhone</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body class="theme-dark">
+    <div class="popup-container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="logo" aria-label="SupaPhone">
+                <img class="logo-image logo-on-dark" src="assets/logo-on-dark.png" alt="SupaPhone">
+                <img class="logo-image logo-on-light" src="assets/logo-on-light.png" alt="SupaPhone">
+            </h1>
+            <button id="settings-btn" class="icon-btn" title="Settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="content">
+            <!-- View: Connected Devices -->
+            <section id="devices-view" class="view active">
+                <div class="view-header">
+                    <h2>Connected Devices</h2>
+                    <div class="devices-header-actions">
+                        <span id="paired-capacity-badge" class="badge success">0/5 paired</span>
+                        <button id="refresh-devices-btn" class="icon-btn refresh-devices-btn" title="Refresh paired devices">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+                                <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <ul id="device-list" class="device-list"></ul>
+                <p id="empty-device-message" class="logs-empty hidden">No devices paired yet.</p>
+
+                <button id="add-device-btn" class="primary-btn mt-4">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Pair New Device
+                </button>
+
+                <hr class="section-divider">
+
+                <div class="quick-send-section">
+                    <h3 class="section-label">Quick Send</h3>
+                    <div class="quick-send-wrapper">
+                        <input type="text" id="quick-send-input" class="quick-send-input"
+                            placeholder="Enter a link or phone number...">
+                        <button class="icon-btn quick-send-btn" title="Send (Select device first)">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                    <p id="quick-send-helper" class="quick-send-helper">Detects links and phone numbers automatically.</p>
+                </div>
+            </section>
+
+            <!-- View: Pair Device -->
+            <section id="pair-view" class="view hidden">
+                <button class="back-btn back-to-devices" title="Back to Devices">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Back
+                </button>
+
+                <div class="pairing-container">
+                    <div class="qr-panel">
+                        <div id="pairing-qr-box" class="qr-placeholder qr-loading">
+                            <div id="pairing-qr-skeleton" class="qr-skeleton"></div>
+                            <img id="pairing-qr-image" class="qr-code-image hidden" alt="Pairing QR code" />
+                        </div>
+                    </div>
+
+                    <p class="pairing-instruction">Scan QR in Android or use the 6-digit code:</p>
+
+                    <div id="pairing-code-value" class="pairing-code pairing-code-text">--- ---</div>
+                    <div class="pairing-actions">
+                        <button id="refresh-code-btn" class="secondary-btn">Regenerate Code</button>
+                        <button id="pair-device-btn" class="primary-btn">Refresh Devices</button>
+                    </div>
+                    <p id="pairing-helper" class="quick-send-helper">Use QR Scan or Enter Code in Android to pair.</p>
+                </div>
+            </section>
+
+            <!-- View: Settings -->
+            <section id="settings-view" class="view hidden">
+                <div class="view-header">
+                    <button class="back-btn back-to-devices" style="margin-bottom: 0;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        Back
+                    </button>
+                    <h2>Settings</h2>
+                </div>
+
+                <div class="setting-card-mini mt-4">
+                    <div class="setting-info">
+                        <h3>Theme</h3>
+                        <p>Light or Dark</p>
+                    </div>
+                    <div class="theme-selector-mini">
+                        <button class="theme-btn-mini active" data-theme="dark">Dark</button>
+                        <button class="theme-btn-mini" data-theme="light">Light</button>
+                    </div>
+                </div>
+
+                <button id="view-logs-btn" class="setting-card-mini"
+                    style="cursor: pointer; width: 100%; text-align: left;">
+                    <div class="setting-info">
+                        <h3>Logs</h3>
+                        <p>View recent activity & errors</p>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+
+                <button id="reset-identity-btn" class="setting-card-mini"
+                    style="cursor: pointer; width: 100%; text-align: left;">
+                    <div class="setting-info">
+                        <h3>Reset Browser Identity</h3>
+                        <p>Rotate local browser credentials and pair again</p>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+                        <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
+                    </svg>
+                </button>
+
+                <a href="https://foundationvibe.github.io/supaphone/privacy.html" target="_blank" rel="noreferrer"
+                    class="setting-card-mini settings-link-card">
+                    <div class="setting-info">
+                        <h3>Privacy Policy</h3>
+                        <p>Open the public privacy page</p>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 17 17 7"></path>
+                        <path d="M7 7h10v10"></path>
+                    </svg>
+                </a>
+
+                <a href="https://foundationvibe.github.io/supaphone/terms.html" target="_blank" rel="noreferrer"
+                    class="setting-card-mini settings-link-card">
+                    <div class="setting-info">
+                        <h3>Terms of Use</h3>
+                        <p>Open the public terms page</p>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 17 17 7"></path>
+                        <path d="M7 7h10v10"></path>
+                    </svg>
+                </a>
+
+                <a href="https://foundationvibe.github.io/supaphone/support.html" target="_blank" rel="noreferrer"
+                    class="setting-card-mini settings-link-card">
+                    <div class="setting-info">
+                        <h3>Support</h3>
+                        <p>Open support and contact details</p>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 17 17 7"></path>
+                        <path d="M7 7h10v10"></path>
+                    </svg>
+                </a>
+            </section>
+
+            <!-- View: Logs -->
+            <section id="logs-view" class="view hidden">
+                <div class="view-header">
+                    <button class="back-btn" id="back-to-settings" style="margin-bottom: 0;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        Back
+                    </button>
+                    <h2>Logs</h2>
+                </div>
+
+                <div id="logs-list" class="logs-list mt-4">
+                    <p class="logs-empty">No logs yet.</p>
+                </div>
+
+                <div class="logs-actions mt-4">
+                    <button id="clear-logs-btn" class="secondary-btn">Clear Logs</button>
+                </div>
+                <p class="logs-retention-note">Logs are retained for 24 hours only.</p>
+
+            </section>
+            <!-- View: How it works -->
+            <section id="how-it-works-view" class="view hidden">
+                <div class="view-header">
+                    <button class="back-btn back-to-devices" style="margin-bottom: 0;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        Back
+                    </button>
+                    <h2>How it works</h2>
+                </div>
+
+                <div class="info-content mt-4" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted);">
+                    <p style="margin-bottom: 0.8rem;"><strong>1. Context Menu</strong><br>Right-click any link or
+                        highlighted phone number on a webpage and select "Send to...".</p>
+                    <p style="margin-bottom: 0.8rem;"><strong>2. Quick Send</strong><br>Use the text box on the main
+                        screen to quickly send a link or phone number to a selected active device.</p>
+                    <p><strong>3. Seamless Magic</strong><br>The SupaPhone Android app instantly receives the data and
+                        performs the action (opening the link or starting a call).</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer"
+            style="padding: 0.6rem 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+            <a href="#" id="how-it-works-link"
+                    style="color: var(--text-muted); text-decoration: underline; font-size: 0.8rem; transition: color 0.2s;">How
+                it works &nearr;</a>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Made with <span
+                    style="color: #ef4444;">&hearts;</span></span>
+        </footer>
+    </div>
+    <script src="vendor/qrcode.js"></script>
+    <script src="popup.js"></script>
+</body>
+
+</html>

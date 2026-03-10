@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <queries>
+        <package android:name="com.whatsapp.business" />
+        <package android:name="com.gbwhatsapp" />
+        <package android:name="com.yowhatsapp" />
+        <package android:name="com.fmwhatsapp" />
+        <package android:name="com.whatsapp.plus" />
+    </queries>
+
+</manifest>

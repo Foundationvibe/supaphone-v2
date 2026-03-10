@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SupaPhone Privacy Policy</title>
+    <meta name="description" content="Privacy policy for the SupaPhone Android app and Chrome browser extension.">
+    <link rel="icon" type="image/png" href="assets/app-icon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container flex-space-between align-center">
+            <a href="index.html" class="logo-wrapper" style="text-decoration: none; color: inherit;">
+                <img src="assets/logo.svg" alt="SupaPhone Logo" class="brand-logo" />
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="terms.html">Terms</a>
+                <a href="support.html">Support</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="policy-page">
+        <div class="container policy-shell">
+            <section class="policy-card">
+                <h1>Privacy Policy</h1>
+                <p class="policy-meta">Last updated: March 10, 2026</p>
+                <p>
+                    SupaPhone is a pairing-first service that lets a browser extension send links or phone numbers to a paired Android device.
+                    This policy covers the SupaPhone Android application, the SupaPhone browser extension, and the SupaPhone backend services.
+                </p>
+                <div class="policy-note" style="margin-top: 1.5rem;">
+                    Privacy and support contact: <a href="mailto:altusbranding@gmail.com">altusbranding@gmail.com</a>
+                </div>
+            </section>
+
+            <section class="policy-card">
+                <h2>Data We Process</h2>
+                <ul>
+                    <li>Links and phone numbers that you intentionally send through the extension or app.</li>
+                    <li>Operational routing data such as source device ID, target device ID, payload type, event ID, timestamps, and active pairing links.</li>
+                    <li>Android push token data used to deliver notifications to a paired phone.</li>
+                    <li>Short-lived abuse-protection telemetry such as endpoint action, supplied client identifier, hashed request fingerprint, and event timestamp.</li>
+                    <li>Device labels and pairing metadata needed to show your paired devices and maintain the service.</li>
+                    <li>Advertising and consent-related data processed through the Google Mobile Ads SDK (AdMob) and Google User Messaging Platform (UMP), which can include consent status, ad request data, app or device identifiers, IP address, diagnostics, and ad performance or interaction data as handled by Google.</li>
+                </ul>
+            </section>
+
+            <section class="policy-card">
+                <h2>How We Use Data</h2>
+                <ul>
+                    <li>Deliver links or phone numbers from your browser to your paired Android device.</li>
+                    <li>Register and maintain push delivery so Android notifications can be received.</li>
+                    <li>Display paired devices, recent delivery history, and delivery status.</li>
+                    <li>Protect the service from spam, misuse, or accidental request floods.</li>
+                    <li>Troubleshoot operational issues and maintain service reliability.</li>
+                    <li>Show supported in-app ads in the Android app and measure ad delivery or performance through Google ad services.</li>
+                    <li>Collect and honor ad privacy choices where required, including the in-app privacy options flow.</li>
+                </ul>
+            </section>
+
+            <section class="policy-card">
+                <h2>Permissions and Device Access</h2>
+                <ul>
+                    <li>Notifications: used to deliver browser-to-phone events on Android.</li>
+                    <li>Call phone: used for one-tap direct calling from an incoming call notification. If denied, the app falls back to opening the dialer.</li>
+                    <li>Camera: used only when you choose QR-based pairing.</li>
+                    <li>Installed app interoperability: Google Play builds only check official WhatsApp packages required for the user-initiated WhatsApp action.</li>
+                </ul>
+                <p style="margin-top: 1rem;">
+                    SupaPhone does not require contacts, SMS, microphone, or location data for its core workflow.
+                </p>
+            </section>
+
+            <section class="policy-card">
+                <h2>Advertising and Consent</h2>
+                <p>
+                    The SupaPhone Android app uses the Google Mobile Ads SDK (AdMob) to show app-open and banner ads in supported app surfaces.
+                    SupaPhone also uses Google User Messaging Platform (UMP) to request and manage ad privacy choices when required by law or platform policy.
+                </p>
+                <p style="margin-top: 1rem;">
+                    Depending on your region, device, and consent choice, Google may process ad-related request data such as app or device identifiers, IP address, diagnostics, approximate location derived from network signals, ad impressions, and ad interaction data under Google's own policies.
+                </p>
+                <p style="margin-top: 1rem;">
+                    SupaPhone does not use the links you send, phone numbers you send, push tokens, or pairing metadata to build advertising audiences, and SupaPhone does not sell your personal data.
+                </p>
+            </section>
+
+            <section class="policy-card">
+                <h2>Chrome Extension Data Use</h2>
+                <p>
+                    The SupaPhone browser extension uses the links, phone numbers, and device-routing data that you intentionally send only to provide the extension's stated functionality: deliver the selected item to your paired Android device, show paired-device state, and support operational security or troubleshooting for that delivery flow.
+                </p>
+                <ul style="margin-top: 1rem;">
+                    <li>Extension-handled user data is not sold.</li>
+                    <li>Extension-handled user data is not used for advertising, creditworthiness, or unrelated profiling.</li>
+                    <li>Extension-handled user data is processed only as needed to provide, secure, or support the SupaPhone browser-to-phone workflow.</li>
+                </ul>
+                <p style="margin-top: 1rem;">
+                    SupaPhone's browser extension is intended to operate in line with the Chrome Web Store Developer Program Policies, including the Limited Use requirements for extension user data.
+                </p>
+            </section>
+
+            <section class="policy-card">
+                <h2>Sharing and Service Providers</h2>
+                <p>
+                    SupaPhone uses service providers to operate the product, including hosted Supabase infrastructure, Firebase Cloud Messaging for Android push delivery, and Google ad services for in-app advertising and consent handling.
+                    Data is processed only as needed to operate SupaPhone.
+                </p>
+                <p style="margin-top: 1rem;">
+                    Ad-related processing performed by Google is subject to Google's own terms and privacy documentation. SupaPhone does not use push tokens or delivered payloads for advertising.
+                </p>
+            </section>
+
+            <section class="policy-card">
+                <h2>Retention</h2>
+                <ul>
+                    <li>Error-level backend activity logs are retained for up to 24 hours.</li>
+                    <li>Recent push events, pairing attempts, and short-lived abuse-protection events are retained for up to 24 hours.</li>
+                    <li>Pairing codes are short-lived and expire automatically.</li>
+                    <li>Extension-side logs can be cleared by the user.</li>
+                </ul>
+            </section>
+
+            <section class="policy-card">
+                <h2>Your Choices</h2>
+                <ul>
+                    <li>You can use six-digit code pairing instead of QR pairing.</li>
+                    <li>You can deny call access and still use the dialer fallback.</li>
+                    <li>You can reset browser identity and re-pair devices from the extension.</li>
+                    <li>You can unpair devices from the extension or Android app.</li>
+                    <li>You can review available ad privacy choices from the in-app Settings screen when privacy options are offered.</li>
+                </ul>
+            </section>
+
+            <section class="policy-card">
+                <h2>Contact</h2>
+                <p>
+                    Privacy contact: <a href="mailto:altusbranding@gmail.com">altusbranding@gmail.com</a><br>
+                    Support contact: <a href="mailto:altusbranding@gmail.com">altusbranding@gmail.com</a>
+                </p>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container flex-space-between align-center">
+            <p>&copy; 2026 SupaPhone. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy</a>
+                <a href="terms.html">Terms</a>
+                <a href="support.html">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

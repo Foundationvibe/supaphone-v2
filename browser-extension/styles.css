@@ -1,0 +1,116 @@
+:root {
+    /* Core Colors */
+    --primary: #471dcf;
+    --primary-hover: #35159a;
+    --success: #10b981;
+    --danger: #ef4444;
+    --text-muted: #c6c6c6;
+
+    /* Dark Theme (Default) - SupaPhone Brand */
+    --bg-base: #343434;
+    --bg-surface: #3d3d3d;
+    --bg-surface-hover: #4a4a4a;
+    --text-main: #ececec;
+    --border-color: rgba(236, 236, 236, 0.12);
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.theme-light {
+    /* Light Theme - SupaPhone Brand */
+    --bg-base: #ececec;
+    --bg-surface: #f7f7f7;
+    --bg-surface-hover: #e1e1e1;
+    --text-main: #343434;
+    --text-muted: #5f5f5f;
+    --border-color: rgba(52, 52, 52, 0.14);
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+    width: 320px;
+    height: auto;
+    min-height: 620px;
+    max-height: 760px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin: 0;
+}
+
+/* Base Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+/* Buttons & Inputs */
+button {
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+    background: transparent;
+    color: var(--text-main);
+    transition: all 0.2s ease;
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    box-shadow: var(--shadow-soft);
+}
+
+.primary-btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.secondary-btn {
+    width: 100%;
+    padding: 0.55rem 0.8rem;
+    background: transparent;
+    color: var(--text-muted);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.secondary-btn:hover {
+    color: var(--text-main);
+    border-color: rgba(99, 102, 241, 0.35);
+    background: rgba(99, 102, 241, 0.08);
+}
+
+.icon-btn {
+    padding: 0.5rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+}
+
+.icon-btn:hover {
+    background-color: var(--bg-surface-hover);
+    color: var(--text-main);
+}

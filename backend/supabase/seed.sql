@@ -1,0 +1,2 @@
+-- Optional local seed data.
+-- Keep this file lightweight for now.

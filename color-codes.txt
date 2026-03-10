@@ -1,0 +1,3 @@
+Purples color hex: 471DCF
+Blacks color hex: 343434
+Whites color hex: ECECEC
