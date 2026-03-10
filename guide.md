@@ -97,6 +97,7 @@ From `backend/`:
 - Verify launcher-driven App Open Ad rules only apply on normal app open.
 - Verify chooser/banner surfaces do not block execution.
 - Verify release build uses real AdMob IDs.
+- Verify Android debug build on a supported JDK (`21` verified in this workspace).
 
 6. Extension
 - Refresh paired devices.

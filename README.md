@@ -96,6 +96,15 @@ SupaPhone V2 is a pairing-first browser-to-Android bridge that sends links or ph
 - The V2 website privacy policy now includes AdMob/UMP disclosure and Chrome extension Limited Use language.
 - The GitHub Pages workflow file exists locally, but pushing workflow files still requires a GitHub token with `workflow` scope.
 
+## Verified Checks (2026-03-11)
+
+- `android-app`: `npm run lint` passed
+- `android-app`: `npm run build` passed
+- `browser-extension`: `node --check` passed for popup/background/build script
+- `browser-extension`: store package build passed
+- `android-app`: `:app:assemblePlayDebug` passed under JDK 21
+- `android-app`: `:app:bundlePlayRelease` is intentionally blocked until real AdMob release IDs are present in `android-app/local.properties`
+
 ## Canonical Project Docs
 
 - `README.md`
