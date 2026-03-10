@@ -11,6 +11,7 @@ Scaffolded functions:
 - `device-ack` - update delivery status from Android
 - `paired-devices` - return paired devices for browser or Android client
 - `recent-pushes` - return recent push events for a target client
+- `rotate-client-secret` - rotate a registered browser or Android client secret
 
 ## Runtime Guards
 
@@ -40,4 +41,5 @@ supabase functions deploy send-payload --use-api --no-verify-jwt
 supabase functions deploy device-ack --use-api --no-verify-jwt
 supabase functions deploy paired-devices --use-api --no-verify-jwt
 supabase functions deploy recent-pushes --use-api --no-verify-jwt
+supabase functions deploy rotate-client-secret --use-api --no-verify-jwt
 ```

@@ -53,6 +53,13 @@ add:
 - `SUPABASE_URL=https://<your-project>.supabase.co`
 - `SUPABASE_ANON_KEY=<your-anon-key>`
 - `SUPAPHONE_EDGE_BASE_URL=https://<your-project>.functions.supabase.co/functions/v1`
+- `ADMOB_APP_ID=<your-admob-app-id>`
+- `ADMOB_APP_OPEN_AD_UNIT_ID=<your-app-open-unit-id>`
+- `ADMOB_BANNER_AD_UNIT_ID=<your-banner-unit-id>`
+
+Release note:
+
+- Android release builds are intentionally blocked until the three AdMob values above are present and are not Google sample IDs.
 
 ## 5) Browser Extension Backend Config
 
@@ -92,7 +99,14 @@ Build and ship the correct Android flavor for the correct channel:
 
 If you are building from Android Studio, select the `play` variant for Play release uploads.
 
-## 8) Optional CI Secrets (Later)
+## 8) Android Build Runtime
+
+Use a supported JDK for Gradle builds:
+
+- JDK 21 is verified for this V2 workspace.
+- JDK 25 is not supported by the current Gradle/Kotlin toolchain here.
+
+## 9) Optional CI Secrets (Later)
 
 When you automate deployments, add these in GitHub Secrets:
 
@@ -101,7 +115,7 @@ When you automate deployments, add these in GitHub Secrets:
 - `SUPABASE_DB_PASSWORD`
 - `FIREBASE_SERVICE_ACCOUNT_JSON`
 
-## 9) Deploy/Serve Required Edge Functions
+## 10) Deploy/Serve Required Edge Functions
 
 Ensure these are available in your Supabase project:
 
@@ -114,11 +128,12 @@ Ensure these are available in your Supabase project:
 - `device-ack`
 - `paired-devices`
 - `recent-pushes`
+- `rotate-client-secret`
 
 Deploy with:
 - `supabase functions deploy <function_name> --use-api --no-verify-jwt`
 
-## 10) Apply Latest Hardening Migration
+## 11) Apply Latest Hardening Migration
 
 Run from `backend/`:
 
@@ -130,7 +145,7 @@ This applies:
 - onboarding abuse throttling support for pairing-code and register-push-token
 - minimal backend logging mode (error-level activity logs only)
 
-## 11) Post-Hardening Runtime Notes
+## 12) Post-Hardening Runtime Notes
 
 - After deploying the latest edge functions, client-scoped routes require per-install client secrets.
 - Existing extension installs should re-pair once so new browser identity + secret are established.

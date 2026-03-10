@@ -24,7 +24,7 @@ What is not used:
 - No ad targeting based on notification data.
 
 User benefit:
-- Immediate "Call", "WhatsApp", or "Copy Link" actions from notification tray, with dialer open on notification-body tap for call payloads.
+- Immediate access to the in-app chooser when a payload notification is opened, followed by explicit phone or link actions based on payload type.
 
 Play Store style justification text:
 - "SupaPhone uses notification permission to deliver the phone numbers and links you send from your browser to this device in real time."
@@ -37,7 +37,7 @@ Purpose:
 - Support one-tap direct calling for phone payloads from notifications and recent history.
 
 Why needed:
-- Enables direct call action without extra steps when user explicitly chooses call action.
+- Enables direct calling after the user explicitly chooses the `Call` option from the chooser flow.
 
 What is accessed:
 - Ability to launch `ACTION_CALL` for user-selected payloads.
@@ -47,7 +47,7 @@ What is not used:
 - No call log reading or contact list access.
 
 User benefit:
-- Faster execution for the app's core "send number to phone and call" workflow.
+- Faster execution for the app's core "send number to phone and call" workflow once the user opens the chooser and selects `Call`.
 
 Play Store style justification text:
 - "SupaPhone requests phone call permission so you can place a direct call from received number actions. If denied, the app opens the dialer instead."

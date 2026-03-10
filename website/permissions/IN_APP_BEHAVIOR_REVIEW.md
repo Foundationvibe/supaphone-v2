@@ -11,8 +11,8 @@ Observed behavior:
 - Real-time push tray alerts will not appear.
 
 Fallback path:
-- User can still open app and check "Recent Pushes" data from backend.
-- User can manually act on received payloads from history.
+- User can still open the app and use the history screen to review recent payloads from backend data.
+- User can manually act on received payloads from the chooser or history surfaces once the app is open.
 
 Result:
 - Degraded real-time experience, but workflow is still available.
@@ -41,7 +41,7 @@ Result:
 Assessment:
 - Pairing: QR scan or 6-digit code.
 - Calling: direct call or open dialer fallback.
-- Link handling: copy link action available.
+- Link handling: chooser provides open, copy, and share actions.
 - Device operations: refresh, rename, remove remain available independent of camera permission.
 
 Conclusion:

@@ -14,6 +14,7 @@ This folder contains the first production-oriented backend scaffold for SupaPhon
   - delivery acknowledgement
   - paired-device listing
   - recent-push listing
+  - client secret rotation
 - Environment templates with explicit manual-key placeholders
 
 ## Important
@@ -25,6 +26,7 @@ This folder contains the first production-oriented backend scaffold for SupaPhon
 - Direct table access for `anon/authenticated` roles is revoked; use edge functions for all app operations.
 - High-risk onboarding endpoints now use short-lived request-event throttling with hashed request fingerprints.
 - Android push-token registration is accepted only for already-paired phone identities.
+- Android release builds require real AdMob IDs in `android-app/local.properties`; debug builds can fall back to Google test IDs.
 
 ## Local Commands
 
@@ -42,6 +44,7 @@ supabase functions serve --env-file .env
 - `backend/firebase-service-account.json` (not committed)
 - `android-app/app/google-services.json` (not committed)
 - `android-app/local.properties` values for Supabase keys
+- `android-app/local.properties` values for AdMob release IDs
 - `browser-extension/config.local.js` (create from `browser-extension/config.local.example.js`)
 
 See `MANUAL_SETUP.md` for the exact list and paths.

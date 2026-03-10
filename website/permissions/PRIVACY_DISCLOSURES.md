@@ -131,7 +131,7 @@ Data minimization:
 "SupaPhone can open supported WhatsApp apps for user-initiated actions. Google Play builds use official WhatsApp packages only."
 
 ### Policy-ready disclosure
-SupaPhone checks for compatible WhatsApp apps only to complete a user-initiated WhatsApp action from an incoming call payload notification.
+SupaPhone checks for compatible WhatsApp apps only to complete a user-initiated WhatsApp action from the Android chooser flow after the user opens a received phone payload.
 
 Behavior:
 - Google Play-distributed builds support official WhatsApp packages only.

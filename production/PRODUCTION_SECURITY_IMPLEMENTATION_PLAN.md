@@ -1,7 +1,7 @@
 # SupaPhone Production Security Implementation Plan
 
-Status: Confirmed, implementation in progress  
-Last updated: 2026-03-08
+Status: Implemented baseline, release validation active  
+Last updated: 2026-03-11
 
 ## Purpose
 
@@ -11,7 +11,7 @@ This document captures the current production security readings for:
 2. Browser extension release to Chrome Web Store
 3. Supabase-backed backend usage in production
 
-This document started as an implementation plan. Execution has now begun, but the GitHub push remains pending explicit approval.
+This document started as an implementation plan. The baseline hardening has been implemented in V2 and the dedicated V2 repository is now live.
 
 ## Scope
 
@@ -51,11 +51,11 @@ Why this matters:
 
 Relevant code surfaces:
 
-- [background.js](E:/0CODE0/supaphone/browser-extension/background.js)
-- [popup.js](E:/0CODE0/supaphone/browser-extension/popup.js)
-- [send-payload/index.ts](E:/0CODE0/supaphone/backend/supabase/functions/send-payload/index.ts)
-- [register-push-token/index.ts](E:/0CODE0/supaphone/backend/supabase/functions/register-push-token/index.ts)
-- [AndroidManifest.xml](E:/0CODE0/supaphone/android-app/app/src/main/AndroidManifest.xml)
+- [background.js](E:/0CODE0/supaphone-V2/browser-extension/background.js)
+- [popup.js](E:/0CODE0/supaphone-V2/browser-extension/popup.js)
+- [send-payload/index.ts](E:/0CODE0/supaphone-V2/backend/supabase/functions/send-payload/index.ts)
+- [register-push-token/index.ts](E:/0CODE0/supaphone-V2/backend/supabase/functions/register-push-token/index.ts)
+- [AndroidManifest.xml](E:/0CODE0/supaphone-V2/android-app/app/src/main/AndroidManifest.xml)
 
 Risk interpretation:
 
@@ -72,9 +72,9 @@ Why this matters:
 
 Current state:
 
-- [`pairing-code`](E:/0CODE0/supaphone/backend/supabase/functions/pairing-code/index.ts) has a local burst limit, but it is keyed by caller-supplied `browserClientId` and can be bypassed by rotating identities.
-- [`register-push-token`](E:/0CODE0/supaphone/backend/supabase/functions/register-push-token/index.ts) currently has no throttling.
-- [`requireAnonApiKey`](E:/0CODE0/supaphone/backend/supabase/functions/_shared/runtime.ts) validates the public key correctly, but that alone is not an abuse-control mechanism.
+- [`pairing-code`](E:/0CODE0/supaphone-V2/backend/supabase/functions/pairing-code/index.ts) has a local burst limit, but it is keyed by caller-supplied `browserClientId` and can be bypassed by rotating identities.
+- [`register-push-token`](E:/0CODE0/supaphone-V2/backend/supabase/functions/register-push-token/index.ts) currently has no throttling.
+- [`requireAnonApiKey`](E:/0CODE0/supaphone-V2/backend/supabase/functions/_shared/runtime.ts) validates the public key correctly, but that alone is not an abuse-control mechanism.
 
 Risk interpretation:
 
@@ -91,12 +91,12 @@ Why this matters:
 
 Current state:
 
-- [AndroidManifest.xml](E:/0CODE0/supaphone/android-app/app/src/main/AndroidManifest.xml) queries:
+- [AndroidManifest.xml](E:/0CODE0/supaphone-V2/android-app/app/src/main/AndroidManifest.xml) queries:
   - `com.gbwhatsapp`
   - `com.yowhatsapp`
   - `com.fmwhatsapp`
   - `com.whatsapp.plus`
-- [FCMService.kt](E:/0CODE0/supaphone/android-app/app/src/main/java/com/supaphone/app/service/FCMService.kt) includes those packages in the launch order.
+- [FCMService.kt](E:/0CODE0/supaphone-V2/android-app/app/src/main/java/com/supaphone/app/service/FCMService.kt) includes those packages in the launch order.
 
 Risk interpretation:
 
@@ -112,7 +112,7 @@ Why this matters:
 
 Current state:
 
-- [background.js](E:/0CODE0/supaphone/browser-extension/background.js) stores:
+- [background.js](E:/0CODE0/supaphone-V2/browser-extension/background.js) stores:
   - `browserClientId`
   - `browserClientSecret`
 - The reset-identity flow is present, which reduces long-term exposure.
@@ -131,8 +131,8 @@ Why this matters:
 
 Current state:
 
-- [MainActivity.kt](E:/0CODE0/supaphone/android-app/app/src/main/java/com/supaphone/app/MainActivity.kt) calls push token sync on launch.
-- [register-push-token/index.ts](E:/0CODE0/supaphone/backend/supabase/functions/register-push-token/index.ts) upserts the Android client immediately.
+- [MainActivity.kt](E:/0CODE0/supaphone-V2/android-app/app/src/main/java/com/supaphone/app/MainActivity.kt) calls push token sync on launch.
+- [register-push-token/index.ts](E:/0CODE0/supaphone-V2/backend/supabase/functions/register-push-token/index.ts) upserts the Android client immediately.
 
 Risk interpretation:
 
@@ -191,9 +191,9 @@ Goal:
 
 Planned implementation:
 
-1. Add request-fingerprint and IP-aware throttling to [`register-push-token`](E:/0CODE0/supaphone/backend/supabase/functions/register-push-token/index.ts)
-2. Strengthen [`pairing-code`](E:/0CODE0/supaphone/backend/supabase/functions/pairing-code/index.ts) so it is not only limited by `browserClientId`
-3. Reuse the same abuse-control model already used in [`pairing-complete`](E:/0CODE0/supaphone/backend/supabase/functions/pairing-complete/index.ts)
+1. Add request-fingerprint and IP-aware throttling to [`register-push-token`](E:/0CODE0/supaphone-V2/backend/supabase/functions/register-push-token/index.ts)
+2. Strengthen [`pairing-code`](E:/0CODE0/supaphone-V2/backend/supabase/functions/pairing-code/index.ts) so it is not only limited by `browserClientId`
+3. Reuse the same abuse-control model already used in [`pairing-complete`](E:/0CODE0/supaphone-V2/backend/supabase/functions/pairing-complete/index.ts)
 4. Keep response messages generic enough that they do not help attackers enumerate internals
 
 Implementation preference:
@@ -340,3 +340,4 @@ Recommended:
 ## Execution Constraint
 
 Execution was confirmed by the user. Do not push to GitHub until the user explicitly approves.
+
