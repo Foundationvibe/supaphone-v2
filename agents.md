@@ -2,42 +2,41 @@
 
 ## Frontend Agent
 
-Owns extension UI/UX and interaction reliability:
-- Pairing views, QR/code rendering, regenerate behavior
-- Device list behavior, rename/remove actions
-- Context menu send flow and payload classification
-- Log view/clear UI and 24-hour retention UX
+Owns browser extension behavior and popup UX:
+- pairing popup code and QR rendering
+- paired-device refresh, rename, remove, reset identity
+- context menu send flow and payload classification
+- release package generation from tracked source
 
 ## Android Agent
 
-Owns native app behavior and call/link execution:
-- Permission onboarding (notifications, call, camera)
-- Pairing flows (QR scan + code)
-- Home and History screens with backend integration
-- Push notification rendering and actions
-- Call/WhatsApp notification reliability hardening and diagnostics
-- Region-aware WhatsApp number normalization and Add-Device pairing flow
+Owns native app behavior:
+- first-boot permission onboarding
+- pairing flows and Add Device
+- notification chooser flow for phone and link payloads
+- launcher-only app-open ad behavior
+- inline banner placement and guardrails
+- call, dialer, browser, copy, share, and WhatsApp execution
 
 ## Backend Agent
 
-Owns Supabase + Firebase integration:
-- Schema, migrations, indexes, cleanup policies
-- Edge functions for pairing, token registration, send, ACK, reads
-- Push delivery status transitions and logs
-- Hosted deployment and secret-aware runtime behavior
-- Request hardening (header auth guard, validation, throttling)
+Owns Supabase and Firebase integration:
+- schema, migrations, cleanup policies
+- edge functions for pairing, push registration, send, ack, and reads
+- identity verification and secret rotation
+- request hardening and throttling
 
 ## Maintenance Agent
 
-Owns repository quality and truth synchronization:
-- Keep `README.md`, `guide.md`, `context.md`, `agents.md`, `skills.md` aligned with live behavior
-- Remove stale assumptions after each functional change
-- Keep temporary planning files local-only and explicitly marked non-canonical until migrated
-- Retire temporary planning files after migration of useful notes into canonical docs
+Owns repo truth and release hygiene:
+- keep `README.md`, `guide.md`, `context.md`, `agents.md`, `skills.md`, and `SupaPhone.md` aligned
+- keep V2 isolated from the legacy repo path
+- keep store compliance notes aligned with runtime behavior
+- keep temporary planning notes clearly marked as supporting docs only
 
-## Coordination State (2026-03-05)
+## Coordination State (2026-03-11)
 
-- Core integration is active and testable.
-- Primary risk area is call/WhatsApp action consistency across devices/ROMs.
-- Documentation now reflects current implementation state and constraints.
-- Next-phase planning draft is tracked in `TEMP_NEXT_PHASE_IMPLEMENTATION_PLAN.md` (temporary/local).
+- V2 is now targeted at a dedicated GitHub repo.
+- Notification flows are chooser-first.
+- Release gating now includes real AdMob IDs for Android release builds.
+- Public privacy policy includes AdMob/UMP disclosure and Chrome extension Limited Use language.

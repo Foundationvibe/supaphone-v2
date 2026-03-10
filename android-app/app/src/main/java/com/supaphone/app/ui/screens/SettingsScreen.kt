@@ -518,7 +518,7 @@ fun SettingsScreen(
             title = { Text("How SupaPhone Works", color = colors.textMain) },
             text = {
                 Text(
-                    text = "1. Pair browser and phone using QR or 8-digit code.\n" +
+                    text = "1. Pair browser and phone using QR or 6-digit code.\n" +
                         "2. Choose a target device from browser context menu.\n" +
                         "3. Send link or number and receive it instantly on phone.\n" +
                         "4. Logs are retained for 24 hours and can be cleared.",

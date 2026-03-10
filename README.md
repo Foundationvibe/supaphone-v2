@@ -1,60 +1,62 @@
 # SupaPhone
 
-SupaPhone is a pairing-first browser-to-Android bridge that sends links or phone numbers from desktop to phone in one step.
+SupaPhone V2 is a pairing-first browser-to-Android bridge that sends links or phone numbers from desktop to phone with explicit device targeting.
 
-## Status (2026-03-08)
+## Status (2026-03-11)
 
-- Browser extension, Android app, and hosted Supabase backend are integrated.
-- Firebase data push is active for Android notifications.
-- App flow is pairing-first (no login/account system).
-- Stabilization and reliability hardening are the current focus.
+- V2 is now separated into its own repository target: `Foundationvibe/supaphone-v2`.
+- Browser extension, Android app, website, and hosted Supabase backend are integrated.
+- Pairing remains account-free and uses a 6-digit code or QR.
+- Current release focus is launch readiness, store compliance, and final device validation.
 
-## What Works
+## Current Product Behavior
 
 ### Pairing
 
-- Browser extension can generate a fresh 6-digit pairing code.
-- Extension also renders pairing QR locally inside the popup.
-- Android pairing screen supports both:
-  - `Enter Code` (default tab)
-  - `QR Scan` (camera permission requested only when needed)
-- Android home now includes `Add Device`, which reopens pairing flow without unpairing the phone.
+- The extension generates a fresh 6-digit pairing code.
+- The extension also renders a local QR inside the popup.
+- Android pairing supports:
+  - `Enter Code` (default)
+  - `QR Scan` (camera permission only when the QR tab is used)
+- Android Home includes `Add Device` so additional browsers can be paired without resetting the phone.
 
 ### Send Flow
 
 - Extension context menu sends:
-  - page/link URL
-  - selected phone number or URL-like text
-- Device targeting is explicit (no default-device auto-routing).
-- Paired devices can be renamed/removed from extension and Android.
+  - current page URL
+  - link URL
+  - selected phone-like text
+- Device targeting is explicit.
+- Paired devices can be refreshed, renamed, and removed.
 
-### Android Notifications
+### Android Notification and Action Flow
 
-- Call payload notification:
-  - body tap: `Open in Dialer`
-  - action 1: `Call`
-  - action 2: `WhatsApp`
-- Play-distributed Android builds use official WhatsApp packages only (`com.whatsapp`, `com.whatsapp.w4b`).
-- Direct/private Android builds can keep broader WhatsApp package fallback when explicitly enabled.
-- Number normalization is region-aware (E.164) for WhatsApp reliability.
+- Notification body tap opens an in-app chooser.
+- Phone payload chooser options:
+  - `Call`
+  - `Open in dialer`
+  - `WhatsApp`
+- Link payload chooser options:
+  - `Open link`
+  - `Copy link`
+  - `Share link`
+- Direct notification action buttons are no longer part of the V2 notification contract.
 
-### Android Home/History
+### Ads
 
-- Home:
-  - paired browser list + refresh
-  - rename/remove browser actions
-  - `Add Device`
-  - WhatsApp region selector (used for number normalization)
-- History:
-  - loads recent pushes from backend
-  - link/call actions split by item type
+- App Open Ad is allowed only on normal launcher-driven app open.
+- App Open Ad is opportunistic during real startup work only.
+- Notification-driven flows stay full-screen-ad free.
+- Inline banner ads are used inside stable in-app surfaces.
+- Release builds must use real AdMob IDs. Debug builds can fall back to Google test IDs.
 
 ## Architecture
 
-- `browser-extension/`: Chrome Manifest V3 extension (popup + service worker)
+- `browser-extension/`: Chrome Manifest V3 extension
 - `android-app/`: Kotlin + Jetpack Compose Android app
-- `backend/`: Supabase migrations + edge functions + Firebase integration
-- `website/`: static web content and policy docs
+- `backend/`: Supabase migrations, edge functions, Firebase integration
+- `website/`: policy pages and public support surfaces
+- `production/`: launch and security planning notes
 
 ## Backend Functions
 
@@ -67,20 +69,17 @@ SupaPhone is a pairing-first browser-to-Android bridge that sends links or phone
 - `recent-pushes`
 - `rename-device`
 - `remove-paired-device`
+- `rotate-client-secret`
 
 ## Security and Reliability Controls
 
-- Request validation and strict input bounds across edge functions.
-- Client identity verification with per-client secret hashing/validation.
-- Burst throttling on high-risk endpoints, including request-event tracking for pairing and push-token registration.
-- Request-level throttling uses hashed request fingerprints rather than storing raw request metadata.
-- Pairing completion now uses request-level throttling + atomic one-time code consumption.
-- Android push-token registration happens only after the phone is paired.
-- Operational cleanup schedules:
-  - pair codes older than 1 hour
-  - activity/push logs, pairing attempts, and request-event throttling data older than 24 hours
-- Backend activity logs now persist error-level events only (minimal logs mode).
-- Android and extension include structured diagnostic logging paths.
+- Strict client identity verification for identity-scoped actions.
+- Request validation and bounded input handling across edge functions.
+- Request-event throttling on pairing and push-token registration flows.
+- Minimal backend logs mode with short retention.
+- Pairing completion uses atomic one-time code consumption.
+- Android push-token registration happens only after pairing.
+- Browser identity reset and secret-rotation support exist in V2.
 
 ## Local Files Required (Not Committed)
 
@@ -90,22 +89,12 @@ SupaPhone is a pairing-first browser-to-Android bridge that sends links or phone
 - `android-app/local.properties`
 - `browser-extension/config.local.js`
 
-## Development Notes
+## Release Notes
 
-- Hosted Supabase workflow is supported (linked project path, no local Docker required).
-- Extension is loaded unpacked from `browser-extension/`.
-- Android app is typically run from Android Studio on device/emulator.
-- Android CLI builds now use the committed Gradle wrapper from `android-app/`.
-- Use JDK 17 for Android builds. Example:
-  - `cd android-app`
-  - `.\gradlew.bat :app:assemblePlayDebug`
-- Android distributions now use flavors:
-  - `play`: official WhatsApp packages only
-  - `direct`: broader WhatsApp package interoperability if required outside Play
-- Website folder now includes publishable `privacy.html` and `terms.html` pages for store-listing policy links.
-- Chrome Web Store packaging should be built from tracked source with:
-  - `node browser-extension/scripts/build-store-package.mjs`
-  - required env vars: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPAPHONE_EDGE_BASE_URL`
+- Android release builds require real `ADMOB_APP_ID`, `ADMOB_APP_OPEN_AD_UNIT_ID`, and `ADMOB_BANNER_AD_UNIT_ID` in `android-app/local.properties`.
+- Chrome Web Store packages should be built from tracked source using `browser-extension/scripts/build-store-package.mjs`.
+- The V2 website privacy policy now includes AdMob/UMP disclosure and Chrome extension Limited Use language.
+- The GitHub Pages workflow file exists locally, but pushing workflow files still requires a GitHub token with `workflow` scope.
 
 ## Canonical Project Docs
 
@@ -114,7 +103,4 @@ SupaPhone is a pairing-first browser-to-Android bridge that sends links or phone
 - `context.md`
 - `guide.md`
 - `skills.md`
-
-Temporary local planning draft:
-
-- `TEMP_NEXT_PHASE_IMPLEMENTATION_PLAN.md`
+- `SupaPhone.md`

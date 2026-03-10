@@ -2,64 +2,54 @@
 
 ## Product Constraints
 
-- No login/account system in v1.
+- No login or account system.
 - Pairing-first onboarding and routing.
-- Explicit target-device model for sends.
-- Low-ops and low-cost-first infrastructure choices.
+- Explicit device targeting for sends.
+- Store-safe ad placement rules must be preserved.
+- V2 is maintained separately from the legacy `supaphone` repo.
 
-## Runtime Snapshot (2026-03-05)
+## Runtime Snapshot (2026-03-11)
 
-- Extension, Android app, and hosted backend are connected.
-- Firebase data push delivery is live.
-- System is in stabilization mode (reliability over feature sprawl).
+- Extension, Android app, website, and hosted backend are connected.
+- Firebase push delivery is active.
+- Pairing is 6-digit code first, with QR as the alternate path.
+- Current focus is release readiness and final manual validation.
 
 ## Live Behavior
 
 ### Extension
 
-- Backend-backed paired device sync.
-- Pairing view supports both 6-digit code and QR.
-- Regenerating pairing code is explicit and loading-aware.
-- Rename/remove paired device actions are available.
+- Backend-backed paired-device sync.
+- Pairing popup supports 6-digit code and QR.
+- Regenerate pairing code is explicit.
+- Rename, remove, refresh, and reset-browser-identity flows are available.
 - Context menu supports URL and phone payload dispatch.
-- Local logs are retained and can be cleared in popup flow.
 
 ### Android
 
-- Pairing screen defaults to 6-digit code tab.
-- QR tab requests camera permission only on demand.
-- If camera permission is denied/blocked, user can retry or switch to 6-digit code.
-- Home screen:
-  - paired browser list + refresh
-  - rename/remove actions
-  - `Add Device` entry
-  - WhatsApp region selector
-- Notifications for call payload:
-  - body tap -> dialer
-  - `Call` action
-  - `WhatsApp` action
-- WhatsApp launch uses package + deep-link fallback and region-aware number normalization.
+- Pairing screen defaults to the 6-digit code tab.
+- QR tab requests camera permission only when opened.
+- Home screen includes paired browsers, refresh, rename, remove, Add Device, and region selection.
+- Notification body tap opens an in-app chooser instead of firing the final action immediately.
+- Phone chooser: `Call`, `Open in dialer`, `WhatsApp`.
+- Link chooser: `Open link`, `Copy link`, `Share link`.
+- App Open Ad is restricted to normal launcher startup only.
+- Inline banner ads are allowed in stable app screens and chooser screens.
 
 ### Backend
 
-- Edge functions enforce anon-key validation and request-shape bounds.
-- Client secret verification is applied for identity-scoped actions.
-- Pairing code cleanup and 24-hour operational cleanup schedules are active.
-- Backend activity logs run in minimal mode (error-level events only).
-- Pairing completion is rate-limited and consumes codes atomically.
-- `send-payload` respects explicit source-target pairing relationship.
-
-## Cleanup and Efficiency Notes
-
-- Unused Android Supabase client path and related dependencies were removed.
-- Android network call handling now guarantees connection close (`disconnect()` in `finally`).
-- Number normalization keeps dialer compatibility while still producing WhatsApp-safe E.164 routing.
+- Edge functions enforce anon-key validation, request shape checks, and identity verification.
+- Pairing and push-token registration flows are throttled.
+- Browser secret rotation is supported.
+- Minimal logs mode is active.
+- Pairing codes are short-lived and single-use.
 
 ## Operational Priorities
 
-1. Maintain call/WhatsApp delivery consistency across device variants.
-2. Preserve pairing reliability when adding/removing multiple browsers.
-3. Keep docs and runtime behavior aligned after each change set.
+1. Keep browser-to-phone delivery reliable.
+2. Keep notification chooser flows fast and predictable.
+3. Preserve store compliance across Play and Chrome submission surfaces.
+4. Keep canonical docs aligned with current runtime behavior.
 
 ## Documentation Authority
 
@@ -70,7 +60,12 @@ Canonical docs:
 - `context.md`
 - `guide.md`
 - `skills.md`
+- `SupaPhone.md`
 
-Temporary/local planning:
+Supporting docs:
 
-- `TEMP_NEXT_PHASE_IMPLEMENTATION_PLAN.md`
+- `backend/README.md`
+- `backend/MANUAL_SETUP.md`
+- `browser-extension/RELEASE.md`
+- `website/permissions/PRIVACY_DISCLOSURES.md`
+- `production/PRODUCTION_SECURITY_IMPLEMENTATION_PLAN.md`

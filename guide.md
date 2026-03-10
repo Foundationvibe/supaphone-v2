@@ -4,46 +4,60 @@
 
 - Pairing-first, no-login architecture.
 - Reliability-first implementation choices.
-- Keep extension, Android, and backend behavior strictly aligned.
+- Notification flows must remain chooser-first.
+- Full-screen ads must stay out of notification-driven flows.
+- V2 changes ship to the dedicated `supaphone-v2` repo, not the legacy repo.
 
 ## Core Flows
 
 ### Pairing
 
 1. Open extension popup pairing view.
-2. Generate/use 6-digit code (QR available in extension and Android).
+2. Generate or refresh a 6-digit code, or use the QR.
 3. Android pairs via:
-  - `Enter Code` (default)
-  - `QR Scan` (camera permission requested when QR tab is used)
-4. From Android Home, `Add Device` opens pairing again for additional browsers.
+   - `Enter Code` (default)
+   - `QR Scan` (camera permission requested only from that tab)
+4. Android `Add Device` reopens pairing for extra browsers.
 
 ### Send
 
-1. In browser context menu, choose target paired device.
+1. In the browser context menu, choose the target paired device.
 2. Send either:
-  - current/link URL
-  - selected phone-like text
-3. Backend validates and dispatches push event.
+   - current page or link URL
+   - selected phone-like text
+3. Backend validates the request and dispatches the push event.
+4. Android receives the notification.
+5. Notification body tap opens the chooser flow.
 
-### Android Notification Contract (Call Payload)
+### Android Notification Contract
 
-- Notification body tap: open dialer.
-- Action `Call`: call intent (permission-aware fallback handled).
-- Action `WhatsApp`: opens installed WhatsApp variant/deeplink.
+#### Phone payload
 
-## Android Diagnostics
+- Notification body tap -> chooser
+- Chooser options:
+  - `Call`
+  - `Open in dialer`
+  - `WhatsApp`
 
-Use Logcat filter:
+#### Link payload
 
-- Tag: `SupaPhoneFlow`
-- Message prefix: `SPH|`
+- Notification body tap -> chooser
+- Chooser options:
+  - `Open link`
+  - `Copy link`
+  - `Share link`
 
-High-value markers:
+## Ads Contract
 
-- Pairing: `PAIR_SCREEN_OPEN`, `PAIR_CAMERA_RESULT`, `PAIR_CODE_SUBMIT_OK`
-- API: `API_CALL_START`, `API_CALL_OK`, `API_CALL_FAIL`
-- Push: `PUSH_RECEIVED`, `PUSH_NOTIFY_RENDER`, `PUSH_NOTIFY_SHOWN`
-- Actions: `PUSH_NOTIFY_CALL_INTENTS`, `PUSH_NOTIFY_WHATSAPP_INTENT`
+- App Open Ad:
+  - normal launcher-driven open only
+  - tied to real startup work only
+  - never used to delay notification flows
+- Inline banners:
+  - allowed in stable app screens
+  - allowed in chooser screens
+- Release rule:
+  - never ship Google test/demo ad IDs in release builds
 
 ## Hosted Supabase Workflow
 
@@ -54,40 +68,49 @@ From `backend/`:
 3. `supabase secrets set --env-file .env`
 4. `supabase functions deploy <function_name> --use-api --no-verify-jwt`
 
-`--no-verify-jwt` remains intentional for no-login pairing-only flow.
+`--no-verify-jwt` remains intentional for the pairing-first no-login flow.
 
 ## QA Sweep Checklist
 
 1. Pairing
 - Verify 6-digit pairing works.
 - Verify QR pairing works.
-- Verify camera deny/block path keeps fallback to 6-digit flow.
+- Verify camera-deny path still allows code pairing.
 
 2. Add Device
 - From Android Home, tap `Add Device`.
-- Pair a second browser and verify return to Home.
+- Pair another browser and verify return to Home.
 
-3. Call + WhatsApp
-- Send raw local number (for example, 10-digit national format).
-- Verify WhatsApp opens expected international target (region-aware normalization).
-- Verify notification body tap opens dialer.
-- Verify `Call` action still executes expected call path.
+3. Phone chooser flow
+- Send a phone payload.
+- Tap the notification body.
+- Verify chooser appears.
+- Verify `Call`, `Open in dialer`, and `WhatsApp` each behave correctly.
 
-4. Extension actions
+4. Link chooser flow
+- Send a link payload.
+- Tap the notification body.
+- Verify chooser appears.
+- Verify `Open link`, `Copy link`, and `Share link` each behave correctly.
+
+5. Ads
+- Verify launcher-driven App Open Ad rules only apply on normal app open.
+- Verify chooser/banner surfaces do not block execution.
+- Verify release build uses real AdMob IDs.
+
+6. Extension
+- Refresh paired devices.
 - Rename/remove paired device.
-- Refresh paired list.
-- Validate quick send + context menu dispatch.
+- Verify popup pairing code and QR.
+- Verify context-menu dispatch.
 
 ## Documentation Discipline
 
-When behavior changes, update in same change set:
+When behavior changes, update in the same change set:
 
 - `README.md`
 - `context.md`
 - `guide.md`
 - `agents.md`
 - `skills.md`
-
-Temporary planning file policy:
-
-- Keep `TEMP_NEXT_PHASE_IMPLEMENTATION_PLAN.md` local and temporary.
+- `SupaPhone.md`
