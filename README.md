@@ -95,7 +95,7 @@ SupaPhone V2 is a pairing-first browser-to-Android bridge that sends links or ph
 - Android release builds require real `ADMOB_APP_ID`, `ADMOB_APP_OPEN_AD_UNIT_ID`, and `ADMOB_BANNER_AD_UNIT_ID` in `android-app/local.properties`.
 - Chrome Web Store packages should be built from tracked source using `browser-extension/scripts/build-store-package.mjs`.
 - The V2 website privacy policy now includes AdMob/UMP disclosure and Chrome extension Limited Use language.
-- The GitHub Pages workflow file exists locally, but pushing workflow files still requires a GitHub token with `workflow` scope.
+- GitHub Pages is deployed from the `website/` directory through the `Deploy Website To GitHub Pages` workflow.
 
 ## Verified Checks (2026-03-11)
 
