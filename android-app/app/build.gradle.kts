@@ -31,6 +31,7 @@ val sampleBannerAdUnitId = "ca-app-pub-3940256099942544/9214589741"
 val configuredAdMobAppId = localProp("ADMOB_APP_ID")
 val configuredAppOpenAdUnitId = localProp("ADMOB_APP_OPEN_AD_UNIT_ID")
 val configuredBannerAdUnitId = localProp("ADMOB_BANNER_AD_UNIT_ID")
+val useRealAdsInDebug = localProp("ADMOB_USE_REAL_ADS_IN_DEBUG", "false").equals("true", ignoreCase = true)
 val isReleaseTaskRequested = gradle.startParameter.taskNames.any { taskName ->
     val normalized = taskName.lowercase()
     normalized.contains("release") || normalized.contains("publish")
@@ -92,9 +93,21 @@ android {
 
     buildTypes {
         debug {
-            val debugAdMobAppId = configuredAdMobAppId.ifBlank { sampleAdMobAppId }
-            val debugAppOpenAdUnitId = configuredAppOpenAdUnitId.ifBlank { sampleAppOpenAdUnitId }
-            val debugBannerAdUnitId = configuredBannerAdUnitId.ifBlank { sampleBannerAdUnitId }
+            val debugAdMobAppId = if (useRealAdsInDebug && configuredAdMobAppId.isNotBlank()) {
+                configuredAdMobAppId
+            } else {
+                sampleAdMobAppId
+            }
+            val debugAppOpenAdUnitId = if (useRealAdsInDebug && configuredAppOpenAdUnitId.isNotBlank()) {
+                configuredAppOpenAdUnitId
+            } else {
+                sampleAppOpenAdUnitId
+            }
+            val debugBannerAdUnitId = if (useRealAdsInDebug && configuredBannerAdUnitId.isNotBlank()) {
+                configuredBannerAdUnitId
+            } else {
+                sampleBannerAdUnitId
+            }
 
             buildConfigField("String", "ADMOB_APP_ID", asBuildConfigString(debugAdMobAppId))
             buildConfigField("String", "ADMOB_APP_OPEN_AD_UNIT_ID", asBuildConfigString(debugAppOpenAdUnitId))

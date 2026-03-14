@@ -11,3 +11,5 @@ SUPAPHONE_WEBSITE_BASE_URL=https://foundationvibe.github.io/supaphone-v2/
 ADMOB_APP_ID=
 ADMOB_APP_OPEN_AD_UNIT_ID=
 ADMOB_BANNER_AD_UNIT_ID=
+## Optional. Set true only if you intentionally want real AdMob units in debug builds.
+ADMOB_USE_REAL_ADS_IN_DEBUG=false

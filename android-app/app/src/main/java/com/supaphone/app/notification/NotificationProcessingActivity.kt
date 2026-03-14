@@ -46,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.supaphone.app.SupaPhoneApplication
+import com.supaphone.app.ads.AdConsentManager
 import com.supaphone.app.BuildConfig
 import com.supaphone.app.data.EdgeFunctionsClient
 import com.supaphone.app.data.SecureStorage
@@ -98,6 +100,7 @@ class NotificationProcessingActivity : ComponentActivity() {
 
         cancelNotification(notificationId)
         acknowledgeOpenedEvent(eventId)
+        primeInlineAds()
 
         val savedTheme = SecureStorage.getTheme(this)
         val useDarkTheme = savedTheme ?: resources.configuration.uiMode.isNightModeActive()
@@ -144,6 +147,26 @@ class NotificationProcessingActivity : ComponentActivity() {
                 AppLog.d("NOTIFICATION_EVENT_OPEN_OK", "event=$eventId")
             }.onFailure { error ->
                 AppLog.w("NOTIFICATION_EVENT_OPEN_FAIL", "event=$eventId reason=${error.message}")
+            }
+        }
+    }
+
+    private fun primeInlineAds() {
+        val app = application as? SupaPhoneApplication ?: return
+        val consentManager = AdConsentManager(this)
+
+        val storedCanRequestAds = consentManager.canRequestAds.value
+        app.updateCanRequestAds(storedCanRequestAds)
+        if (storedCanRequestAds) {
+            app.initializeAdsSdkIfNeeded()
+        }
+
+        lifecycleScope.launch {
+            consentManager.requestConsentUpdate(this@NotificationProcessingActivity) { canRequestAds ->
+                app.updateCanRequestAds(canRequestAds)
+                if (canRequestAds) {
+                    app.initializeAdsSdkIfNeeded()
+                }
             }
         }
     }
