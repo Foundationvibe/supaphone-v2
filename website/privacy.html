@@ -27,7 +27,7 @@
         <div class="container policy-shell">
             <section class="policy-card">
                 <h1>Privacy Policy</h1>
-                <p class="policy-meta">Last updated: March 10, 2026</p>
+                <p class="policy-meta">Last updated: March 14, 2026</p>
                 <p>
                     SupaPhone is a pairing-first service that lets a browser extension send links or phone numbers to a paired Android device.
                     This policy covers the SupaPhone Android application, the SupaPhone browser extension, and the SupaPhone backend services.
@@ -54,7 +54,7 @@
                 <ul>
                     <li>Deliver links or phone numbers from your browser to your paired Android device.</li>
                     <li>Register and maintain push delivery so Android notifications can be received.</li>
-                    <li>Display paired devices, recent delivery history, and delivery status.</li>
+                    <li>Display paired devices, recent delivery history, chooser actions, and delivery status.</li>
                     <li>Protect the service from spam, misuse, or accidental request floods.</li>
                     <li>Troubleshoot operational issues and maintain service reliability.</li>
                     <li>Show supported in-app ads in the Android app and measure ad delivery or performance through Google ad services.</li>
@@ -66,7 +66,7 @@
                 <h2>Permissions and Device Access</h2>
                 <ul>
                     <li>Notifications: used to deliver browser-to-phone events on Android.</li>
-                    <li>Call phone: used for one-tap direct calling from an incoming call notification. If denied, the app falls back to opening the dialer.</li>
+                    <li>Call phone: used when you explicitly choose direct calling from the in-app chooser. If denied, the app falls back to opening the dialer.</li>
                     <li>Camera: used only when you choose QR-based pairing.</li>
                     <li>Installed app interoperability: Google Play builds only check official WhatsApp packages required for the user-initiated WhatsApp action.</li>
                 </ul>
@@ -122,6 +122,7 @@
                     <li>Recent push events, pairing attempts, and short-lived abuse-protection events are retained for up to 24 hours.</li>
                     <li>Pairing codes are short-lived and expire automatically.</li>
                     <li>Extension-side logs can be cleared by the user.</li>
+                    <li>Paired-device metadata is retained while a pairing remains active and is removed when the pairing is deleted or reset.</li>
                 </ul>
             </section>
 
