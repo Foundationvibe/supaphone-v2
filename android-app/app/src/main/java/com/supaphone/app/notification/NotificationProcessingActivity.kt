@@ -16,6 +16,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -185,6 +187,11 @@ class NotificationProcessingActivity : ComponentActivity() {
                 startActivity(launchIntent)
                 finish()
             }
+
+            PhoneAction.Share -> {
+                sharePhoneNumber(normalizedPhone)
+                finish()
+            }
         }
     }
 
@@ -233,6 +240,18 @@ class NotificationProcessingActivity : ComponentActivity() {
     private fun openDialer(phone: String) {
         startActivity(
             Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        )
+    }
+
+    private fun sharePhoneNumber(phone: String) {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, phone)
+        }
+        startActivity(
+            Intent.createChooser(shareIntent, "Share number").apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         )
@@ -351,7 +370,8 @@ class NotificationProcessingActivity : ComponentActivity() {
 private enum class PhoneAction {
     Call,
     OpenDialer,
-    WhatsApp
+    WhatsApp,
+    Share
 }
 
 private enum class LinkAction {
@@ -394,84 +414,108 @@ private fun ActionChooserScreen(
     }
     val subheading = if (isPhone) payload else payload.take(120)
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.bgBase)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 20.dp, top = 14.dp, end = 20.dp, bottom = 116.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconButton(onClick = onDismiss) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close",
-                    tint = colors.textMain
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(onClick = onDismiss) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close",
+                        tint = colors.textMain
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = heading,
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold),
+                color = colors.textMain,
+                textAlign = TextAlign.Center
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = subheading,
+                style = MaterialTheme.typography.bodyMedium,
+                color = colors.textMuted,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(18.dp))
+            InlineBannerAd(
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(18.dp))
+
+            if (isPhone) {
+                ActionOptionCard(
+                    label = "Call",
+                    description = "Place the call directly",
+                    onClick = { onPhoneActionSelected(PhoneAction.Call) }
+                )
+                Spacer(Modifier.height(10.dp))
+                ActionOptionCard(
+                    label = "Open in dialer",
+                    description = "Review the number before calling",
+                    onClick = { onPhoneActionSelected(PhoneAction.OpenDialer) }
+                )
+                Spacer(Modifier.height(10.dp))
+                ActionOptionCard(
+                    label = "WhatsApp",
+                    description = "Open the number in WhatsApp",
+                    onClick = { onPhoneActionSelected(PhoneAction.WhatsApp) }
+                )
+                Spacer(Modifier.height(10.dp))
+                ActionOptionCard(
+                    label = "Share",
+                    description = "Share the number with another app",
+                    onClick = { onPhoneActionSelected(PhoneAction.Share) }
+                )
+            } else {
+                ActionOptionCard(
+                    label = "Open link",
+                    description = "Launch the link in your browser",
+                    onClick = { onLinkActionSelected(LinkAction.OpenLink) }
+                )
+                Spacer(Modifier.height(10.dp))
+                ActionOptionCard(
+                    label = "Copy link",
+                    description = "Copy the URL to clipboard",
+                    onClick = { onLinkActionSelected(LinkAction.CopyLink) }
+                )
+                Spacer(Modifier.height(10.dp))
+                ActionOptionCard(
+                    label = "Share link",
+                    description = "Share the URL to another app",
+                    onClick = { onLinkActionSelected(LinkAction.ShareLink) }
                 )
             }
         }
 
-        Spacer(Modifier.height(12.dp))
-        Text(
-            text = heading,
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold),
-            color = colors.textMain,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(10.dp))
-        Text(
-            text = subheading,
-            style = MaterialTheme.typography.bodyMedium,
-            color = colors.textMuted,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(24.dp))
-        InlineBannerAd(
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(24.dp))
-
-        if (isPhone) {
-            ActionOptionCard(
-                label = "Call",
-                description = "Place the call directly",
-                onClick = { onPhoneActionSelected(PhoneAction.Call) }
-            )
-            Spacer(Modifier.height(12.dp))
-            ActionOptionCard(
-                label = "Open in dialer",
-                description = "Review the number before calling",
-                onClick = { onPhoneActionSelected(PhoneAction.OpenDialer) }
-            )
-            Spacer(Modifier.height(12.dp))
-            ActionOptionCard(
-                label = "WhatsApp",
-                description = "Open the number in WhatsApp",
-                onClick = { onPhoneActionSelected(PhoneAction.WhatsApp) }
-            )
-        } else {
-            ActionOptionCard(
-                label = "Open link",
-                description = "Launch the link in your browser",
-                onClick = { onLinkActionSelected(LinkAction.OpenLink) }
-            )
-            Spacer(Modifier.height(12.dp))
-            ActionOptionCard(
-                label = "Copy link",
-                description = "Copy the URL to clipboard",
-                onClick = { onLinkActionSelected(LinkAction.CopyLink) }
-            )
-            Spacer(Modifier.height(12.dp))
-            ActionOptionCard(
-                label = "Share link",
-                description = "Share the URL to another app",
-                onClick = { onLinkActionSelected(LinkAction.ShareLink) }
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp, bottom = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            InlineBannerAd(
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
