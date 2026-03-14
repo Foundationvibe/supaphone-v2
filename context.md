@@ -31,7 +31,7 @@
 - QR tab requests camera permission only when opened.
 - Home screen includes paired browsers, refresh, rename, remove, Add Device, and region selection.
 - Notification body tap opens an in-app chooser instead of firing the final action immediately.
-- Phone chooser: `Call`, `Open in dialer`, `WhatsApp`.
+- Phone chooser: `Call`, `Open in dialer`, `WhatsApp`, `Share`.
 - Link chooser: `Open link`, `Copy link`, `Share link`.
 - App Open Ad is restricted to normal launcher startup only.
 - Inline banner ads are allowed in stable app screens and chooser screens.
@@ -40,7 +40,7 @@
 
 - Edge functions enforce anon-key validation, request shape checks, and identity verification.
 - Pairing and push-token registration flows are throttled.
-- Browser secret rotation is supported.
+- Browser secret rotation is supported on a 30-day interval.
 - Minimal logs mode is active.
 - Pairing codes are short-lived and single-use.
 

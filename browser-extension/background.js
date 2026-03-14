@@ -17,7 +17,7 @@ const MAX_DEVICE_COUNT = 5;
 const MAX_LOG_MESSAGE_LENGTH = 220;
 const MAX_USER_ERROR_LENGTH = 140;
 const PAIRING_CODE_MAX_AGE_MS = 150 * 1000;
-const BROWSER_SECRET_ROTATION_MS = 24 * 60 * 60 * 1000;
+const BROWSER_SECRET_ROTATION_MS = 30 * 24 * 60 * 60 * 1000;
 const VALID_ICON_STATUSES = new Set(["default", "success", "error-server", "error-client"]);
 let backendConfigLoadError = null;
 let pairingCodeRefreshInFlight = null;
@@ -241,6 +241,10 @@ function toSafeDeviceName(name) {
         return "Paired Device";
     }
     return text.slice(0, 32);
+}
+
+function buildNotificationSetMessage(deviceName) {
+    return `Notification set to ${toSafeDeviceName(deviceName)}.`;
 }
 
 function minutesSince(isoTimestamp) {
@@ -825,10 +829,11 @@ async function initializeExtension() {
     await setIcon("default");
 }
 
-async function sendPayloadToBackend(payloadType, payload, targetDeviceId) {
+async function sendPayloadToBackend(payloadType, payload, targetDeviceId, targetDeviceName = "") {
     const safeType = payloadType === "call" ? "call" : "link";
     const trimmedPayload = typeof payload === "string" ? payload.trim() : "";
     const trimmedTargetId = typeof targetDeviceId === "string" ? targetDeviceId.trim() : "";
+    const safeTargetDeviceName = toSafeDeviceName(targetDeviceName);
 
     if (!trimmedPayload) {
         return { ok: false, status: "error-client", error: "Payload is empty." };
@@ -890,7 +895,7 @@ async function sendPayloadToBackend(payloadType, payload, targetDeviceId) {
         return {
             ok: true,
             status: "success",
-            message: data?.message || `Payload accepted for device ${trimmedTargetId}.`
+            message: buildNotificationSetMessage(safeTargetDeviceName)
         };
     } catch (error) {
         return {
@@ -1067,7 +1072,8 @@ chrome.contextMenus.onClicked.addListener(async info => {
     if (info.menuItemId.startsWith("send-link-")) {
         const deviceId = info.menuItemId.replace("send-link-", "");
         const urlToShare = (info.linkUrl || info.pageUrl || "").trim();
-        const result = await sendPayloadToBackend("link", urlToShare, deviceId);
+        const targetDevice = devices.find(device => device.id === deviceId);
+        const result = await sendPayloadToBackend("link", urlToShare, deviceId, targetDevice?.name || "");
         if (!result.ok) {
             await addLog(result.status, `Send link failed: ${result.error}`);
             await flashIcon(result.status);
@@ -1086,7 +1092,8 @@ chrome.contextMenus.onClicked.addListener(async info => {
             await flashIcon("error-client");
             return;
         }
-        const result = await sendPayloadToBackend(parsed.type, parsed.payload, deviceId);
+        const targetDevice = devices.find(device => device.id === deviceId);
+        const result = await sendPayloadToBackend(parsed.type, parsed.payload, deviceId, targetDevice?.name || "");
         if (!result.ok) {
             await addLog(result.status, `Send selection failed: ${result.error}`);
             await flashIcon(result.status);
@@ -1106,6 +1113,11 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         switch (message.action) {
             case "get-devices": {
                 const devices = await getDevices();
+                sendResponse({ ok: true, devices });
+                break;
+            }
+            case "get-cached-devices": {
+                const devices = await loadStoredDevices();
                 sendResponse({ ok: true, devices });
                 break;
             }
@@ -1131,7 +1143,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
                 const result = await sendPayloadToBackend(
                     message.payloadType,
                     message.payload,
-                    target?.id || ""
+                    target?.id || "",
+                    target?.name || ""
                 );
                 if (!result.ok) {
                     await addLog(result.status, `Quick send failed: ${result.error}`);

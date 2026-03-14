@@ -1,15 +1,7 @@
 package com.supaphone.app.ui.screens
 
-import android.Manifest
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,7 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.PhoneInTalk
 import androidx.compose.material.icons.filled.Refresh
@@ -59,12 +51,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.supaphone.app.data.BackendConfig
 import com.supaphone.app.data.EdgeFunctionsClient
 import com.supaphone.app.data.RecentPush
 import com.supaphone.app.data.SecureStorage
 import com.supaphone.app.diagnostics.AppLog
+import com.supaphone.app.notification.NotificationActionIntent
 import com.supaphone.app.ui.components.InlineBannerAd
 import com.supaphone.app.ui.theme.SupaPhoneColors
 import com.supaphone.app.ui.theme.SupaPhoneTheme
@@ -80,9 +72,6 @@ data class HistoryItem(
     val content: String,
     val time: String,
 )
-
-private fun sanitizePhoneNumber(raw: String): String =
-    raw.filter { it.isDigit() || it == '+' }
 
 private fun normalizeUrl(rawUrl: String): String {
     val trimmed = rawUrl.trim()
@@ -117,54 +106,6 @@ private fun looksLikeLink(raw: String): Boolean {
     }.getOrDefault(false)
 }
 
-private fun openLinkInBrowser(context: Context, rawUrl: String): Boolean {
-    val normalized = normalizeUrl(rawUrl).replace(" ", "%20")
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(normalized)).apply {
-        addCategory(Intent.CATEGORY_BROWSABLE)
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
-
-    if (intent.resolveActivity(context.packageManager) != null) {
-        return runCatching {
-            context.startActivity(intent)
-            true
-        }.getOrDefault(false)
-    }
-
-    val chooser = Intent.createChooser(intent, "Open link with").apply {
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
-    if (chooser.resolveActivity(context.packageManager) != null) {
-        return runCatching {
-            context.startActivity(chooser)
-            true
-        }.getOrDefault(false)
-    }
-    return false
-}
-
-private fun openDialer(context: Context, phone: String): Boolean {
-    return try {
-        val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
-        dialIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(dialIntent)
-        true
-    } catch (_: Exception) {
-        false
-    }
-}
-
-private fun startDirectCall(context: Context, phone: String): Boolean {
-    return try {
-        val callIntent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$phone"))
-        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(callIntent)
-        true
-    } catch (_: Exception) {
-        false
-    }
-}
-
 private fun formatTimestamp(iso: String?): String {
     if (iso.isNullOrBlank()) return "Unknown time"
     return try {
@@ -197,7 +138,6 @@ fun HistoryScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var pendingDirectCallPhone by remember { mutableStateOf<String?>(null) }
     val history = remember { mutableStateListOf<HistoryItem>() }
     var helperMessage by remember { mutableStateOf("Fetching recent pushes...") }
     var helperIsError by remember { mutableStateOf(false) }
@@ -254,91 +194,29 @@ fun HistoryScreen(onBack: () -> Unit) {
         }
     }
 
-    val requestCallPermission = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        val phone = pendingDirectCallPhone
-        pendingDirectCallPhone = null
-
-        if (phone.isNullOrBlank()) {
-            return@rememberLauncherForActivityResult
-        }
-
-        if (granted) {
-            AppLog.i("HISTORY_CALL_PERMISSION", "result=granted")
-            if (!startDirectCall(context, phone)) {
-                if (openDialer(context, phone)) {
-                    Toast.makeText(context, "Unable to place direct call. Opened dialer.", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "Unable to place call.", Toast.LENGTH_SHORT).show()
-                }
-            }
+    fun openHistoryChooser(item: HistoryItem) {
+        val isLink = item.type == "link" || looksLikeLink(item.content)
+        val normalizedPayload = if (isLink) {
+            normalizeUrl(item.content)
         } else {
-            AppLog.w("HISTORY_CALL_PERMISSION", "result=denied")
-            if (openDialer(context, phone)) {
-                Toast.makeText(context, "Call permission denied. Opened dialer.", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, "Unable to open dialer.", Toast.LENGTH_SHORT).show()
-            }
+            item.content.trim()
         }
-    }
-
-    fun onIconAction(item: HistoryItem) {
-        if (item.type == "link" || looksLikeLink(item.content)) {
-            AppLog.i("HISTORY_ICON_ACTION", "type=link action=copy")
-            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            clipboard.setPrimaryClip(ClipData.newPlainText("SupaPhone Link", item.content))
-            Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
-            return
+        val itemType = if (isLink) {
+            NotificationActionIntent.ITEM_TYPE_LINK
+        } else {
+            NotificationActionIntent.ITEM_TYPE_PHONE
         }
 
-        val phone = sanitizePhoneNumber(item.content)
-        if (phone.isBlank()) {
-            Toast.makeText(context, "Invalid phone number", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        AppLog.i("HISTORY_ICON_ACTION", "type=call action=open_dialer")
-        if (!openDialer(context, phone)) {
-            Toast.makeText(context, "Unable to open dialer", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    fun onCardAction(item: HistoryItem) {
-        if (item.type == "link" || looksLikeLink(item.content)) {
-            AppLog.i("HISTORY_CARD_ACTION", "type=link action=open_link")
-            if (!openLinkInBrowser(context, item.content)) {
-                Toast.makeText(context, "Unable to open link", Toast.LENGTH_SHORT).show()
-            }
-            return
-        }
-
-        val phone = sanitizePhoneNumber(item.content)
-        if (phone.isBlank()) {
-            Toast.makeText(context, "Invalid phone number", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val hasPermission = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.CALL_PHONE
-        ) == PackageManager.PERMISSION_GRANTED
-
-        if (hasPermission) {
-            AppLog.i("HISTORY_CARD_ACTION", "type=call action=direct_call")
-            if (!startDirectCall(context, phone)) {
-                if (openDialer(context, phone)) {
-                    Toast.makeText(context, "Unable to place direct call. Opened dialer.", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "Unable to place call.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            return
-        }
-
-        pendingDirectCallPhone = phone
-        AppLog.i("HISTORY_CARD_ACTION", "type=call action=request_permission")
-        requestCallPermission.launch(Manifest.permission.CALL_PHONE)
+        AppLog.i("HISTORY_OPEN_CHOOSER", "type=$itemType")
+        context.startActivity(
+            NotificationActionIntent.createIntent(
+                context = context,
+                itemType = itemType,
+                payload = normalizedPayload,
+                notificationId = -1,
+                eventId = ""
+            )
+        )
     }
 
     LaunchedEffect(Unit) {
@@ -416,8 +294,8 @@ fun HistoryScreen(onBack: () -> Unit) {
                         HistoryCard(
                             item = item,
                             colors = colors,
-                            onCardClick = { onCardAction(item) },
-                            onIconClick = { onIconAction(item) }
+                            onCardClick = { openHistoryChooser(item) },
+                            onIconClick = { openHistoryChooser(item) }
                         )
                     }
                 }
@@ -481,8 +359,8 @@ private fun HistoryCard(
 
             IconButton(onClick = onIconClick, modifier = Modifier.size(32.dp)) {
                 Icon(
-                    imageVector = if (item.type == "link") Icons.Default.ContentCopy else Icons.Default.PhoneInTalk,
-                    contentDescription = if (item.type == "link") "Copy Link" else "Open Dialer",
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "Open actions",
                     modifier = Modifier.size(16.dp),
                     tint = colors.textMuted,
                 )

@@ -36,6 +36,7 @@ SupaPhone V2 is a pairing-first browser-to-Android bridge that sends links or ph
   - `Call`
   - `Open in dialer`
   - `WhatsApp`
+  - `Share`
 - Link payload chooser options:
   - `Open link`
   - `Copy link`
@@ -79,7 +80,7 @@ SupaPhone V2 is a pairing-first browser-to-Android bridge that sends links or ph
 - Minimal backend logs mode with short retention.
 - Pairing completion uses atomic one-time code consumption.
 - Android push-token registration happens only after pairing.
-- Browser identity reset and secret-rotation support exist in V2.
+- Browser identity reset and 30-day secret-rotation support exist in V2.
 
 ## Local Files Required (Not Committed)
 

@@ -301,6 +301,12 @@ document.addEventListener("DOMContentLoaded", () => {
         renderDevices();
     }
 
+    async function loadCachedDevices() {
+        const response = await sendRuntimeMessage({ action: "get-cached-devices" });
+        state.devices = response.devices || [];
+        renderDevices();
+    }
+
     function setDevicesRefreshLoading(isLoading) {
         devicesRefreshInFlight = isLoading;
         refreshDevicesButton.disabled = isLoading;
@@ -780,7 +786,8 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             loadThemePreference();
             await loadBackendStatus();
-            await loadDevices();
+            await loadCachedDevices();
+            await refreshDevicesFromBackend();
         } catch (error) {
             setHelperMessage(quickSendHelper, `Initialization failed: ${toUserErrorMessage(error)}`, "error");
         }

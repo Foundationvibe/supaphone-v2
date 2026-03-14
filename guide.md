@@ -38,6 +38,7 @@
   - `Call`
   - `Open in dialer`
   - `WhatsApp`
+  - `Share`
 
 #### Link payload
 
@@ -85,7 +86,7 @@ From `backend/`:
 - Send a phone payload.
 - Tap the notification body.
 - Verify chooser appears.
-- Verify `Call`, `Open in dialer`, and `WhatsApp` each behave correctly.
+- Verify `Call`, `Open in dialer`, `WhatsApp`, and `Share` each behave correctly.
 
 4. Link chooser flow
 - Send a link payload.

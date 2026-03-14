@@ -44,6 +44,7 @@ SupaPhone supports multi-device pairing.
   - Call
   - Open in dialer
   - WhatsApp
+  - Share
 
 ### Number Handling
 
