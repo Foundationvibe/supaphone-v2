@@ -67,7 +67,7 @@ android {
         buildConfigField(
             "String",
             "SUPAPHONE_WEBSITE_BASE_URL",
-            asBuildConfigString(localProp("SUPAPHONE_WEBSITE_BASE_URL", "https://foundationvibe.github.io/supaphone"))
+            asBuildConfigString(localProp("SUPAPHONE_WEBSITE_BASE_URL", "https://foundationvibe.github.io/supaphone-v2"))
         )
         buildConfigField("String", "ADMOB_APP_ID", asBuildConfigString(""))
         buildConfigField("String", "ADMOB_APP_OPEN_AD_UNIT_ID", asBuildConfigString(""))
