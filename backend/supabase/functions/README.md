@@ -1,6 +1,6 @@
 # SupaPhone Edge Functions
 
-Scaffolded functions:
+Implemented functions:
 
 - `pairing-code` - generate short-lived 6-digit pairing code
 - `pairing-complete` - validate code and link browser <-> phone

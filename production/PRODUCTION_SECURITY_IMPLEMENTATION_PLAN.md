@@ -1,7 +1,7 @@
 # SupaPhone Production Security Implementation Plan
 
-Status: Implemented baseline, release validation active  
-Last updated: 2026-03-11
+Status: baseline implemented, release preparation active  
+Last updated: 2026-03-15
 
 ## Purpose
 
@@ -11,7 +11,7 @@ This document captures the current production security readings for:
 2. Browser extension release to Chrome Web Store
 3. Supabase-backed backend usage in production
 
-This document started as an implementation plan. The baseline hardening has been implemented in V2 and the dedicated V2 repository is now live.
+This document started as an implementation plan. The baseline hardening is already implemented in V2 and the current focus is release preparation and submission readiness.
 
 ## Scope
 
@@ -30,7 +30,7 @@ Excluded:
 
 The codebase is not showing a critical exploit that should block release immediately.
 
-The highest practical release risk is store and policy compliance mismatch, not a direct source-code secret leak.
+The highest practical release risk remains store and policy compliance mismatch, not a direct source-code secret leak.
 
 Current risk profile:
 
@@ -73,7 +73,7 @@ Why this matters:
 Current state:
 
 - [`pairing-code`](E:/0CODE0/supaphone-V2/backend/supabase/functions/pairing-code/index.ts) has a local burst limit, but it is keyed by caller-supplied `browserClientId` and can be bypassed by rotating identities.
-- [`register-push-token`](E:/0CODE0/supaphone-V2/backend/supabase/functions/register-push-token/index.ts) currently has no throttling.
+- [`register-push-token`](E:/0CODE0/supaphone-V2/backend/supabase/functions/register-push-token/index.ts) remains part of the public onboarding surface and should continue to be watched for abuse patterns.
 - [`requireAnonApiKey`](E:/0CODE0/supaphone-V2/backend/supabase/functions/_shared/runtime.ts) validates the public key correctly, but that alone is not an abuse-control mechanism.
 
 Risk interpretation:
@@ -85,18 +85,14 @@ Risk interpretation:
 
 Why this matters:
 
-- The Android app explicitly supports unofficial WhatsApp variants.
+- The codebase includes separate distribution behavior for broader WhatsApp interoperability outside Play.
 - Those packages are outside the trust boundary of the official WhatsApp clients.
 - This may also be harder to defend during Play review depending on store interpretation and disclosure quality.
 
 Current state:
 
-- [AndroidManifest.xml](E:/0CODE0/supaphone-V2/android-app/app/src/main/AndroidManifest.xml) queries:
-  - `com.gbwhatsapp`
-  - `com.yowhatsapp`
-  - `com.fmwhatsapp`
-  - `com.whatsapp.plus`
-- [FCMService.kt](E:/0CODE0/supaphone-V2/android-app/app/src/main/java/com/supaphone/app/service/FCMService.kt) includes those packages in the launch order.
+- Play-distributed builds should remain limited to official WhatsApp packages.
+- Any broader package support should remain outside the Play distribution path.
 
 Risk interpretation:
 
@@ -122,17 +118,15 @@ Risk interpretation:
 - This is a normal extension tradeoff.
 - Not a release blocker, but it should be treated as a revocable credential model.
 
-## 5. Low / Medium Risk: Push Identity Is Registered Before Pairing
+## 5. Low / Medium Risk: Push Identity Registration Timing
 
 Why this matters:
 
-- The Android app creates backend presence before the user actually completes pairing.
-- This increases background table noise and widens the onboarding write surface.
+- Push registration timing is operationally sensitive because it affects both delivery readiness and backend noise.
 
 Current state:
 
-- [MainActivity.kt](E:/0CODE0/supaphone-V2/android-app/app/src/main/java/com/supaphone/app/MainActivity.kt) calls push token sync on launch.
-- [register-push-token/index.ts](E:/0CODE0/supaphone-V2/backend/supabase/functions/register-push-token/index.ts) upserts the Android client immediately.
+- This area should stay under review as the production user base grows.
 
 Risk interpretation:
 
@@ -321,23 +315,12 @@ After implementation, validate:
    - Chrome listing declarations match extension behavior
    - Play Data Safety answers match app behavior
 
-## Manual Decisions Needed From You Before Execution
+## Release Readiness Notes
 
-1. Do you want Play Store Android builds to support only official WhatsApp packages?
-2. Do you want a single Android build for all distribution channels, or separate Play / non-Play variants?
-3. Do you want push-token registration delayed until after successful pairing?
-4. Do you want this plan copied into permanent docs after implementation, or kept as a production-only planning note?
+Before public release:
 
-## Recommended Decision Set
-
-Recommended:
-
-1. official WhatsApp packages only for Play builds
-2. separate Play and non-Play behavior only if you still need modded package support outside Play
-3. delay push-token registration until the device is actually paired
-4. keep this file as the production planning record and update `context.md` after execution
-
-## Execution Constraint
-
-Execution was confirmed by the user. Do not push to GitHub until the user explicitly approves.
+1. keep store metadata aligned with runtime behavior
+2. keep local credentials out of tracked source
+3. validate Android release signing and Play flavor output
+4. validate Chrome Web Store package generation from tracked source only
 

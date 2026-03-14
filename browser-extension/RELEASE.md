@@ -20,3 +20,4 @@ Notes:
 - Local development can continue using `browser-extension/config.local.js`.
 - Do not upload `browser-extension/` directly to the store; upload `dist-store/` only.
 - The generated package removes the need for `config.local.js` inside the store artifact.
+- Keep release-time config values local to the build environment. Do not commit real backend values into tracked source.

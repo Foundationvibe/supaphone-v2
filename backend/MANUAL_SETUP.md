@@ -1,6 +1,6 @@
 # Manual Setup Checklist
 
-Use this checklist after pulling the latest scaffold.
+Use this checklist after pulling the latest V2 source.
 
 ## 1) Backend `.env`
 
@@ -12,7 +12,7 @@ Fill:
 
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
-- `APP_PUBLIC_ANON_KEY` (set this to the same value as `SUPABASE_ANON_KEY`)
+- `APP_PUBLIC_ANON_KEY` (same value as `SUPABASE_ANON_KEY`)
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_PROJECT_REF`
 - `SUPABASE_DB_PASSWORD`
@@ -30,7 +30,7 @@ and set:
 
 - `FIREBASE_SERVICE_ACCOUNT_JSON_PATH=./firebase-service-account.json` in `backend/.env`
 
-Optional hosted secret (recommended):
+Optional hosted secret:
 
 - `FIREBASE_SERVICE_ACCOUNT_JSON_BASE64=<base64 of firebase-service-account.json>`
 
@@ -53,13 +53,16 @@ add:
 - `SUPABASE_URL=https://<your-project>.supabase.co`
 - `SUPABASE_ANON_KEY=<your-anon-key>`
 - `SUPAPHONE_EDGE_BASE_URL=https://<your-project>.functions.supabase.co/functions/v1`
+- `SUPAPHONE_WEBSITE_BASE_URL=https://foundationvibe.github.io/supaphone-v2/`
 - `ADMOB_APP_ID=<your-admob-app-id>`
 - `ADMOB_APP_OPEN_AD_UNIT_ID=<your-app-open-unit-id>`
 - `ADMOB_BANNER_AD_UNIT_ID=<your-banner-unit-id>`
+- `ADMOB_USE_REAL_ADS_IN_DEBUG=false`
 
 Release note:
 
 - Android release builds are intentionally blocked until the three AdMob values above are present and are not Google sample IDs.
+- Debug builds default to Google sample ads unless `ADMOB_USE_REAL_ADS_IN_DEBUG=true`.
 
 ## 5) Browser Extension Backend Config
 
@@ -145,9 +148,9 @@ This applies:
 - onboarding abuse throttling support for pairing-code and register-push-token
 - minimal backend logging mode (error-level activity logs only)
 
-## 12) Post-Hardening Runtime Notes
+## 12) Runtime Notes
 
 - After deploying the latest edge functions, client-scoped routes require per-install client secrets.
-- Existing extension installs should re-pair once so new browser identity + secret are established.
+- Existing extension installs should re-pair if the backend project changes.
 - Existing Android installs should pair first, then open the app once to register the push token on the paired identity.
 - Play Store builds should use the `play` flavor so only official WhatsApp packages are queried/launched.

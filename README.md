@@ -1,65 +1,69 @@
 # SupaPhone
 
-SupaPhone V2 is a pairing-first browser-to-Android bridge that sends links or phone numbers from desktop to phone with explicit device targeting.
+SupaPhone is a pairing-first browser-to-Android bridge. It sends links or phone numbers from a desktop browser to a paired Android device, then lets the user finish the action on mobile with an explicit chooser.
 
-## Status (2026-03-11)
+## Status
 
-- V2 is now separated into its own repository target: `Foundationvibe/supaphone-v2`.
-- Browser extension, Android app, website, and hosted Supabase backend are integrated.
-- Pairing remains account-free and uses a 6-digit code or QR.
-- Current release focus is launch readiness, store compliance, and final device validation.
+Last updated: 2026-03-15
+
+- Public GitHub repo: `Foundationvibe/supaphone-v2`
+- Public site: `https://foundationvibe.github.io/supaphone-v2/`
+- Pairing is account-free and uses a 6-digit code or QR
+- Android app, browser extension, website, Supabase backend, Firebase push, and AdMob wiring are integrated
+- Current focus is release signing and store setup
 
 ## Current Product Behavior
 
 ### Pairing
 
-- The extension generates a fresh 6-digit pairing code.
-- The extension also renders a local QR inside the popup.
+- The browser extension generates a 6-digit pairing code.
+- The extension also renders a QR for the same pairing request.
 - Android pairing supports:
-  - `Enter Code` (default)
-  - `QR Scan` (camera permission only when the QR tab is used)
-- Android Home includes `Add Device` so additional browsers can be paired without resetting the phone.
+  - `Enter Code`
+  - `QR Scan`
+- Android Home includes `Add Device` so more browsers can be paired without resetting the phone.
 
 ### Send Flow
 
-- Extension context menu sends:
+- The extension can send:
   - current page URL
   - link URL
   - selected phone-like text
 - Device targeting is explicit.
 - Paired devices can be refreshed, renamed, and removed.
 
-### Android Notification and Action Flow
+### Android Notification and Chooser Flow
 
 - Notification body tap opens an in-app chooser.
-- Phone payload chooser options:
+- Phone chooser options:
   - `Call`
   - `Open in dialer`
   - `WhatsApp`
   - `Share`
-- Link payload chooser options:
+- Link chooser options:
   - `Open link`
   - `Copy link`
   - `Share link`
-- Direct notification action buttons are no longer part of the V2 notification contract.
+- Direct notification action buttons are not part of the V2 contract.
 
 ### Ads
 
-- App Open Ad is allowed only on normal launcher-driven app open.
-- App Open Ad is opportunistic during real startup work only.
+- App Open Ad is restricted to normal launcher-driven app open.
+- App Open Ad is shown only during real startup work.
 - Notification-driven flows stay full-screen-ad free.
-- Inline banner ads are used inside stable in-app surfaces.
-- Release builds must use real AdMob IDs. Debug builds can fall back to Google test IDs.
+- Inline banner ads are used in supported in-app surfaces.
+- Debug builds default to Google sample ads.
+- Release builds require real AdMob IDs.
 
 ## Architecture
 
 - `browser-extension/`: Chrome Manifest V3 extension
 - `android-app/`: Kotlin + Jetpack Compose Android app
-- `backend/`: Supabase migrations, edge functions, Firebase integration
-- `website/`: policy pages and public support surfaces
-- `production/`: launch and security planning notes
+- `backend/`: Supabase migrations, Edge Functions, Firebase push wiring
+- `website/`: privacy, support, and terms pages
+- `production/`: release and security notes
 
-## Backend Functions
+## Edge Functions
 
 - `pairing-code`
 - `pairing-complete`
@@ -72,17 +76,9 @@ SupaPhone V2 is a pairing-first browser-to-Android bridge that sends links or ph
 - `remove-paired-device`
 - `rotate-client-secret`
 
-## Security and Reliability Controls
+## Local-Only Runtime Files
 
-- Strict client identity verification for identity-scoped actions.
-- Request validation and bounded input handling across edge functions.
-- Request-event throttling on pairing and push-token registration flows.
-- Minimal backend logs mode with short retention.
-- Pairing completion uses atomic one-time code consumption.
-- Android push-token registration happens only after pairing.
-- Browser identity reset and 30-day secret-rotation support exist in V2.
-
-## Local Files Required (Not Committed)
+These stay on the machine and are not committed:
 
 - `backend/.env`
 - `backend/firebase-service-account.json`
@@ -92,21 +88,12 @@ SupaPhone V2 is a pairing-first browser-to-Android bridge that sends links or ph
 
 ## Release Notes
 
-- Android release builds require real `ADMOB_APP_ID`, `ADMOB_APP_OPEN_AD_UNIT_ID`, and `ADMOB_BANNER_AD_UNIT_ID` in `android-app/local.properties`.
-- Chrome Web Store packages should be built from tracked source using `browser-extension/scripts/build-store-package.mjs`.
-- The V2 website privacy policy now includes AdMob/UMP disclosure and Chrome extension Limited Use language.
-- GitHub Pages is deployed from the `website/` directory through the `Deploy Website To GitHub Pages` workflow.
+- Android release builds require real `ADMOB_APP_ID`, `ADMOB_APP_OPEN_AD_UNIT_ID`, and `ADMOB_BANNER_AD_UNIT_ID`.
+- Chrome Web Store packages should be built from tracked source into `browser-extension/dist-store/`.
+- The public privacy policy includes AdMob/UMP disclosure and Chrome extension Limited Use wording.
+- GitHub Pages deploys from the `website/` directory.
 
-## Verified Checks (2026-03-11)
-
-- `android-app`: `npm run lint` passed
-- `android-app`: `npm run build` passed
-- `browser-extension`: `node --check` passed for popup/background/build script
-- `browser-extension`: store package build passed
-- `android-app`: `:app:assemblePlayDebug` passed under JDK 21
-- `android-app`: `:app:bundlePlayRelease` is intentionally blocked until real AdMob release IDs are present in `android-app/local.properties`
-
-## Canonical Project Docs
+## Canonical Docs
 
 - `README.md`
 - `agents.md`

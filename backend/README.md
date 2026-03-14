@@ -1,12 +1,12 @@
-# SupaPhone Backend Scaffold
+# SupaPhone Backend
 
-This folder contains the first production-oriented backend scaffold for SupaPhone.
+This folder contains the source-of-truth backend for SupaPhone.
 
 ## Scope Included
 
-- Supabase local project structure (`supabase/`)
-- Initial SQL schema migration for pairing and push events
-- Edge functions for:
+- Supabase project structure (`supabase/`)
+- SQL migrations for pairing, delivery, throttling, and cleanup
+- Edge Functions for:
   - pairing code generation
   - pairing completion
   - Android push token registration
@@ -15,13 +15,12 @@ This folder contains the first production-oriented backend scaffold for SupaPhon
   - paired-device listing
   - recent-push listing
   - client secret rotation
-- Environment templates with explicit manual-key placeholders
+- Environment templates with placeholder values only
 
 ## Important
 
-- This scaffold is backend-first and key-driven.
-- Push delivery requires Firebase credentials (`FIREBASE_SERVICE_ACCOUNT_JSON_BASE64` or `FIREBASE_SERVICE_ACCOUNT_JSON` or `FIREBASE_SERVICE_ACCOUNT_JSON_PATH`) and Android `google-services.json`.
-- Client code should treat this as "backend wired, provider pending" until keys are configured.
+- Push delivery requires Firebase credentials and Android `google-services.json`.
+- Local runtime files stay out of git.
 - Edge functions now require a valid Supabase public key in request headers (`apikey` + bearer token), validated against `APP_PUBLIC_ANON_KEY`/`SUPABASE_ANON_KEY` (with publishable-key fallback).
 - Direct table access for `anon/authenticated` roles is revoked; use edge functions for all app operations.
 - High-risk onboarding endpoints now use short-lived request-event throttling with hashed request fingerprints.
@@ -38,7 +37,7 @@ supabase db reset
 supabase functions serve --env-file .env
 ```
 
-## Files You Must Fill
+## Local Files You Must Fill
 
 - `backend/.env` (create from `.env.example`)
 - `backend/firebase-service-account.json` (not committed)

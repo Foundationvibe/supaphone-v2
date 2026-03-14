@@ -2,32 +2,33 @@
 
 ## Operating Mode
 
-- Pairing-first, no-login architecture.
-- Reliability-first implementation choices.
-- Notification flows must remain chooser-first.
-- Full-screen ads must stay out of notification-driven flows.
-- V2 changes ship to the dedicated `supaphone-v2` repo, not the legacy repo.
+- Pairing-first, no-login architecture
+- Reliability-first implementation choices
+- Notification flows stay chooser-first
+- Full-screen ads stay out of notification-driven flows
+- Shareable source of truth is `Foundationvibe/supaphone-v2`
+- Local runtime credentials stay outside git
 
 ## Core Flows
 
 ### Pairing
 
-1. Open extension popup pairing view.
-2. Generate or refresh a 6-digit code, or use the QR.
-3. Android pairs via:
-   - `Enter Code` (default)
-   - `QR Scan` (camera permission requested only from that tab)
-4. Android `Add Device` reopens pairing for extra browsers.
+1. Open the extension pairing view
+2. Generate or refresh a 6-digit code, or use the QR
+3. Pair on Android using:
+   - `Enter Code`
+   - `QR Scan`
+4. Use Android `Add Device` to pair more browsers later
 
 ### Send
 
-1. In the browser context menu, choose the target paired device.
+1. In the browser, choose a paired device from the context menu
 2. Send either:
    - current page or link URL
    - selected phone-like text
-3. Backend validates the request and dispatches the push event.
-4. Android receives the notification.
-5. Notification body tap opens the chooser flow.
+3. Backend validates and records the request
+4. Android receives the notification
+5. Notification body tap opens the chooser flow
 
 ### Android Notification Contract
 
@@ -51,22 +52,22 @@
 ## Ads Contract
 
 - App Open Ad:
-  - normal launcher-driven open only
-  - tied to real startup work only
-  - never used to delay notification flows
+  - launcher-driven open only
+  - tied to real startup work
+  - never used to delay chooser flows
 - Inline banners:
-  - allowed in stable app screens
+  - allowed in supported in-app screens
   - allowed in chooser screens
 - Release rule:
-  - never ship Google test/demo ad IDs in release builds
+  - never ship Google sample ad IDs in release builds
 
-## Hosted Supabase Workflow
+## Hosted Backend Workflow
 
-From `backend/`:
+Run from `backend/`:
 
 1. `supabase link --project-ref <PROJECT_REF>`
 2. `supabase db push --linked`
-3. `supabase secrets set --env-file .env`
+3. `supabase secrets set ...`
 4. `supabase functions deploy <function_name> --use-api --no-verify-jwt`
 
 `--no-verify-jwt` remains intentional for the pairing-first no-login flow.
@@ -74,37 +75,36 @@ From `backend/`:
 ## QA Sweep Checklist
 
 1. Pairing
-- Verify 6-digit pairing works.
-- Verify QR pairing works.
-- Verify camera-deny path still allows code pairing.
+- verify 6-digit pairing works
+- verify QR pairing works
+- verify camera-deny path still allows code pairing
 
 2. Add Device
-- From Android Home, tap `Add Device`.
-- Pair another browser and verify return to Home.
+- from Android Home, tap `Add Device`
+- pair another browser and verify return to Home
 
 3. Phone chooser flow
-- Send a phone payload.
-- Tap the notification body.
-- Verify chooser appears.
-- Verify `Call`, `Open in dialer`, `WhatsApp`, and `Share` each behave correctly.
+- send a phone payload
+- tap the notification body
+- verify chooser appears
+- verify `Call`, `Open in dialer`, `WhatsApp`, and `Share`
 
 4. Link chooser flow
-- Send a link payload.
-- Tap the notification body.
-- Verify chooser appears.
-- Verify `Open link`, `Copy link`, and `Share link` each behave correctly.
+- send a link payload
+- tap the notification body
+- verify chooser appears
+- verify `Open link`, `Copy link`, and `Share link`
 
 5. Ads
-- Verify launcher-driven App Open Ad rules only apply on normal app open.
-- Verify chooser/banner surfaces do not block execution.
-- Verify release build uses real AdMob IDs.
-- Verify Android debug build on a supported JDK (`21` verified in this workspace).
+- verify App Open rules apply only on normal app open
+- verify chooser/banner surfaces do not block execution
+- verify release build uses real AdMob IDs
 
 6. Extension
-- Refresh paired devices.
-- Rename/remove paired device.
-- Verify popup pairing code and QR.
-- Verify context-menu dispatch.
+- refresh paired devices
+- rename/remove paired device
+- verify popup pairing code and QR
+- verify context-menu dispatch
 
 ## Documentation Discipline
 
