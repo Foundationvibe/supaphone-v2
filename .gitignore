@@ -42,11 +42,15 @@ backend/.env.*.local
 backend/firebase-service-account.json
 backend/*firebase-adminsdk*.json
 backend/*service-account*.json
+firebase-service-account.json
+*firebase-adminsdk*.json
+*service-account*.json
 backend/.temp/
 backend/.branches/
 backend/.supabase/
 backend/supabase/.temp/
 android-app/app/google-services.json
+android-app/app/google-services.json.old-*
 browser-extension/config.local.js
 browser-extension/dist-store/
 TEMP_NEXT_PHASE_IMPLEMENTATION_PLAN.md
