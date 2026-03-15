@@ -480,10 +480,6 @@ private fun ActionChooserScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(18.dp))
-            InlineBannerAd(
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(18.dp))
 
             if (isPhone) {
                 ActionOptionCard(
